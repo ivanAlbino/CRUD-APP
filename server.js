@@ -50,22 +50,31 @@ app.get("/items/:id",(req,res) =>{
 
 });
 
-
-//Insert an Item 
+//Insert an Item based on the json file 
 app.post("/items",(req,res) =>{
     let itm = req.body;
     var sql = "SET @id = ?; SET @name = ?; SET @qty = ?; SET @amount =?; CALL AddorEditItems(@id, @name,@qty,@amount);";
     connection.query(sql,[itm.id,itm.name,itm.qty,itm.amount],(err,rows,fields)=>{
         if(err)
-            msg("error but added");
+            msg(err);
         else
             rows.forEach(element => {
                 if(element.constructor == Array)
                 res.send('New Item ID: ' + element[0].id);
-            });
-         
+            });       
     });
+});
 
+//Update an Item based on the json file 
+app.put("/items",(req,res) =>{
+    let itm = req.body;
+    var sql = "SET @id = ?; SET @name = ?; SET @qty = ?; SET @amount =?; CALL AddorEditItems(@id, @name,@qty,@amount);";
+    connection.query(sql,[itm.id,itm.name,itm.qty,itm.amount],(err,rows,fields)=>{
+        if(err)
+            msg(err);
+        else
+            res.send("Updated succefully");         
+    });
 });
 
 //Delete an Item based on the id
