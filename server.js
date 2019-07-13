@@ -2,26 +2,30 @@
  * Description: Loads the app server using express
  */
 
- const express = require('express')
- const app = express()
- const mysql = require('mysql')
+ const express = require('express');
+ const app = express();
+ const mysql = require('mysql');
+ const bodyparser = require('body-parser');
 
- function msg(msg){
-    console.log(msg)
+app.use(bodyparser.json());
+
+function msg(msg){
+    console.log(msg);
 }
 
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'AB12',
-    database: 'inventory'
-})
+    database: 'inventory',
+    multipleStatements: true
+});
 
 connection.connect((err)=>{
     if(err)
         throw err;
-    msg('Connected to Database')
-})
+    msg('Connected to Database');
+});
 
 //Retrieve all items from the Inventory database
 app.get("/items",(req,res) =>{
@@ -30,35 +34,54 @@ app.get("/items",(req,res) =>{
             throw err
         msg("Fetched items successfully")
         res.json(rows)
-    })
+    });
 
-})
+});
 
-//Retrieve an Item based on the id
+
+//Retrieve all items from the Inventory database
 app.get("/items/:id",(req,res) =>{
-    connection.query("SELECT FROM items WHERE id =?",[req.params.id], (err,rows,fields)=>{
+    connection.query("SELECT * FROM items WHERE id =?",req.params.id, (err,rows,fields)=>{
         if(err)
             throw err
         msg("Fetched item ID no. " +req.params.id + " successfully")
         res.json(rows)
-    })
+    });
 
-})
+});
+
+
+//Insert an Item 
+app.post("/items",(req,res) =>{
+    let itm = req.body;
+    var sql = "SET @id = ?; SET @name = ?; SET @qty = ?; SET @amount =?; CALL AddorEditItems(@id, @name,@qty,@amount);";
+    //var query = "INSERT INTO items (id,name,qty,amount) VALUES (itm.id,itm.name,itm.qty,itm.amount);";
+    connection.query(sql,[itm.id,itm.name,itm.qty,itm.amount],(err,rows,fields)=>{
+        if(!err)
+          rows.array.forEach(element => {
+              if(element.constructor == Array)
+              res.send('New Item ID: ' + element[0].id);
+          });
+        else
+          msg(err);
+    });
+
+});
 
 //Delete an Item based on the id
 app.delete("/items/:id",(req,res) =>{
     connection.query("DELETE FROM items WHERE id =?",[req.params.id], (err,rows,fields)=>{
         if(err)
             throw err
-        msg("Deleted item ID no. " +req.params.id + " successfully")
+        msg("Deleted item ID no. " +req.params.id + " successfully");
         res.json(rows)
-    })
+    });
 
-})
+});
 
 
  app.listen(3000,() =>{
      msg("Server is up and Listening on 3000");
- })
+ });
 
  
