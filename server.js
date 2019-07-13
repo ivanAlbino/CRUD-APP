@@ -2,10 +2,10 @@
  * Description: Loads the app server using express
  */
 
- const express = require('express');
- const app = express();
- const mysql = require('mysql');
- const bodyparser = require('body-parser');
+const express = require('express');
+const app = express();
+const mysql = require('mysql');
+const bodyparser = require('body-parser');
 
 app.use(bodyparser.json());
 
@@ -55,15 +55,15 @@ app.get("/items/:id",(req,res) =>{
 app.post("/items",(req,res) =>{
     let itm = req.body;
     var sql = "SET @id = ?; SET @name = ?; SET @qty = ?; SET @amount =?; CALL AddorEditItems(@id, @name,@qty,@amount);";
-    //var query = "INSERT INTO items (id,name,qty,amount) VALUES (itm.id,itm.name,itm.qty,itm.amount);";
     connection.query(sql,[itm.id,itm.name,itm.qty,itm.amount],(err,rows,fields)=>{
-        if(!err)
-          rows.array.forEach(element => {
-              if(element.constructor == Array)
-              res.send('New Item ID: ' + element[0].id);
-          });
+        if(err)
+            msg("error but added");
         else
-          msg(err);
+            rows.forEach(element => {
+                if(element.constructor == Array)
+                res.send('New Item ID: ' + element[0].id);
+            });
+         
     });
 
 });
