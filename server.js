@@ -1,6 +1,6 @@
 /**
  * Author: Ivan Albino
- * Description: Loads the app server using express
+ * Description: An application that Creates, Retrieves, Update and Delete data in a database.
  * References: https://www.youtube.com/watch?v=4fWWn2Pe2Mk , https://youtu.be/F7NVpxxmmgM?list=PL0dzCUj1L5JE4w_OctDGyZOhML6OtJSqR , 
  * http://www.mysqltutorial.org/getting-started-with-mysql-stored-procedures.aspx , https://www.edureka.co/blog/node-js-mysql-tutorial/
  * Tools used: VisualCode code editor used, MySQL workbench for creating the database and the items table, Postman for testing the routes, and GitHub for the repository.
@@ -55,7 +55,7 @@ app.post("/items",(req,res) =>{
 app.get("/items",(req,res) =>{
     connection.query("SELECT * FROM items", (err,rows,fields)=>{
         if(err)
-            throw err
+            throw err;
         msg("Fetched items successfully");
         res.json(rows);
     });
@@ -66,9 +66,9 @@ app.get("/items",(req,res) =>{
 app.get("/items/:id",(req,res) =>{
     connection.query("SELECT * FROM items WHERE id =?",req.params.id, (err,rows,fields)=>{
         if(err)
-            throw err
+            throw err;
         msg("Fetched item ID no. " +req.params.id + " successfully");
-        res.json(rows)
+        res.json(rows);
     });
 });
 
@@ -89,9 +89,9 @@ app.put("/items",(req,res) =>{
 app.delete("/items/:id",(req,res) =>{
     connection.query("DELETE FROM items WHERE id =?",[req.params.id], (err,rows,fields)=>{
         if(err)
-            throw err
+            throw err;
         msg("Deleted item successfully");
-        res.json(rows)
+        res.json(rows);
     });
 
 });
