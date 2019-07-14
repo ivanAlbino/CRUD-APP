@@ -74,10 +74,10 @@ app.get("/items/:id",(req,res) =>{
 
 
 /**Update an Item based on the json file */
-app.put("/items",(req,res) =>{
+app.put("/items/:id",(req,res) =>{
     let itm = req.body;
     var sql = "SET @id = ?; SET @name = ?; SET @qty = ?; SET @amount =?; CALL AddorEditItems(@id, @name,@qty,@amount);";
-    connection.query(sql,[itm.id,itm.name,itm.qty,itm.amount],(err,rows,fields)=>{
+    connection.query(sql,[req.params.id,itm.name,itm.qty,itm.amount],(err,rows,fields)=>{
         if(err)
             msg(err);
         else
